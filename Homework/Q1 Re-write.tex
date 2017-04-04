@@ -1,0 +1,201 @@
+\documentclass{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz,pgfplots,multicol}
+
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ (\hmwkClassInstructor\ \hmwkClassTime)}
+\rhead{\hmwkTitle}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Quiz 1 Rewrite}
+\newcommand{\hmwkDueDate}{January 27, 2017}
+\newcommand{\hmwkClass}{MATH 1300}
+\newcommand{\hmwkClassTime}{Section 005}
+\newcommand{\hmwkClassInstructor}{Professor Braden Balentine}
+\newcommand{\hmwkAuthorName}{\textbf{John Keller}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 10:00am}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{enumerate}
+\setcounter{enumi}{0}
+	\item State the precise definition of the following:
+	\begin{enumerate}
+		\item A $function\ f$: 
+	\end{enumerate}
+\setcounter{enumi}{3}
+	\item Consider the function $f(x)=x^2-2x+1$. Let us evaluate the difference quotient $$\frac{f(x+h)-f(x)}{h}$$
+		\begin{enumerate}
+		\setcounter{enumii}{1}
+		\item Find $f(x+h)-f(x)$. Do this by taking your expression from (a), and subtracting the original function $f(x)$. If done correctly, every remaining term should involve an $h$. 
+		\begin{align*}
+			f(x+h)-f(x)&=(x+h)^2-2(x+h)+1-(x^2-2x+1) \\
+			&= x^2+h^2+2xh-2x-2h+1-x^2+2x-1 \\
+			&= \boxed{h^2+2xh-2h}
+		\end{align*}
+		\\ \textbf{Error:} My error in this problem was simply writing $x^2$ instead of $h^2$. I had all the work correct up to the last step, where I wrote $x$ instead of $h$.
+		\item Find $\frac{f(x+h)-f(x)}{h}$. Do this by taking your expression from (b), dividing it by $h$, and performing any cancelations. Your answer should no longer be a fraction.
+		\begin{align*}
+			\frac{f(x+h)-f(x)}{h}&=\frac{h^2+2xh-2h}{h} \\
+			&= \frac{h(h+2x-2)}{h} \\
+			&= \boxed{h+2x-2}
+		\end{align*}
+		\textbf{Error:} This error is simply a continuation from the previous part (b), where I wrote $x$ instead of $h$.
+		\end{enumerate}
+	\item State the domain of the following functions:
+		\begin{enumerate}
+			\item $f(x)=\frac{x+4}{x^2-9}$ \\ $$(-\infty, -3)\cup (-3,3) \cup (3,\infty)$$ \\ \textbf{Error:} My error in this problem was a simple mistake in confusing the 4 in the numerator with the answer, so I ended up writing 4 instead of the obvious 3.
+			\item $f(x)=\sqrt{2-x}$ \\ $$(-\infty,2]$$ \\ \textbf{Error:} My error in this problem was forgetting that you cannot square root 0. 
+		\end{enumerate}
+\setcounter{enumi}{7}
+	\item If $f(x)=\sqrt{x^2-3}$ and $g(x)=\ln{2x+5}$, find the following compositions:
+	\begin{enumerate}
+		\item $(f\circ g)(x)$
+			$= \sqrt{\ln{(2x+5)}-3}$ \\ \textbf{Error:} I simply forgot to rewrite the "$\ln$" part of the function.
+		\item $(g\circ f)(x)$
+			$= \ln{(2(\sqrt{x^2-3})+5)}$ \\ \textbf{Error:} I simply forgot to rewrite the "$\ln$" part of the function.
+	\end{enumerate}
+\setcounter{enumi}{9}
+	\item True of False? If true, explain why. If false, explain why OR provide a counterexample. Some of these are intentionally tricky, so be careful!
+	\begin{enumerate}
+	\setcounter{enumii}{1}
+		\item If $x^2=4x$, then $x=4$ is \textbf{the} solution.
+		\begin{align*}
+			x^2 &= 4x \\
+			x^2 -4x &= 0 \\
+			x(x-4) &=0 \\
+			4(4-4) &= 0 \\
+			0(0-4) &= 0
+		\end{align*}
+		\textbf{False.} \\
+		\\ \textbf{Error:} As you discussed in class, I divided by $x$, and because you cannot divide by 0, the only way you could do so would be if $x \neq 0$.
+		\item $\sqrt{16}=\pm 4$\\
+		\textbf{False.}\\ \\
+		\textbf{Error:} My error in this problem was I thought of it as solving for $x^2$, but simply the $\sqrt{16}$ is a positive 4.
+		\item $\frac{2}{3}x=\frac{2x}{3}$\\
+		\textbf{True.}
+		$$\frac{2}{3}x=\frac{2\times x}{3}=\frac{2x}{3}$$
+		\textbf{Error:} My error in this problem was not explaining my answer.
+		\item $\sqrt{x^2+4}=x+2$ \\
+		\textbf{False.}
+		\begin{align*}
+		\sqrt{x^2+4}&=x+2 \\
+		x + 2 &\neq (x+2)^2 \\
+		\end{align*}
+		\textbf{Error:} My error in this problem was not actually explaining my thoughts.
+	\end{enumerate}
+\end{enumerate}
+
+
+
+\end{document}

@@ -1,0 +1,279 @@
+\documentclass{article}
+
+\usepackage{calculator}
+\usepackage{calculus}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz,pgfplots,multicol}
+\usepackage[font=small,labelformat=empty]{caption}
+\usetikzlibrary{automata,positioning,arrows,patterns}
+\usepackage{enumitem}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ (\hmwkClassInstructor\ \hmwkClassTime)}
+\rhead{\hmwkTitle}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{HW \#11}
+\newcommand{\hmwkDueDate}{April 6, 2017}
+\newcommand{\hmwkClass}{MATH 1300}
+\newcommand{\hmwkClassTime}{Section 005}
+\newcommand{\hmwkClassInstructor}{Professor Braden Balentine}
+\newcommand{\hmwkAuthorName}{\textbf{John Keller}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 10:00am}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+
+\usepackage{xcolor}
+    \colorlet{Curve}{red!75!black}
+    \colorlet{Tangent}{blue!75!black}
+\usepackage{pgfplots}
+    \pgfplotsset{compat=1.10}
+    \usetikzlibrary{
+        calc,
+        intersections,
+        math,
+    }
+    \makeatletter
+        \def\parsenode[#1]#2\pgf@nil{%
+            \tikzset{label node/.style={#1}}
+            \def\nodetext{#2}
+        }
+        \tikzset{
+            % define style for the points
+            Point/.style={
+                shape=circle,
+                inner sep=0pt,
+                minimum size=3pt,
+            },
+            add node at x/.style 2 args={
+                name path global=plot line,
+                /pgfplots/execute at end plot visualization/.append={
+                        \begingroup
+                        \@ifnextchar[{\parsenode}{\parsenode[]}#2\pgf@nil
+                    \path [name path global = position line #1-1]
+                        ({axis cs:#1,0}|-{rel axis cs:0,0}) --
+                        ({axis cs:#1,0}|-{rel axis cs:0,1});
+                    \path [xshift=1pt, name path global = position line #1-2]
+                        ({axis cs:#1,0}|-{rel axis cs:0,0}) --
+                        ({axis cs:#1,0}|-{rel axis cs:0,1});
+                    \path [
+                        name intersections={
+                            of={plot line and position line #1-1},
+                            name=left intersection
+                        },
+                        name intersections={
+                            of={plot line and position line #1-2},
+                            name=right intersection
+                        },
+                        label node/.append style={pos=1}
+                    ] (left intersection-1) -- (right intersection-1)
+                        node [label node]{\nodetext};
+                    % ---------------------------------------------------------
+                    % draw the tangent line from a bit right of the point on
+                    % the curve to the intersection with the ordinate
+                    % and draw the corresponding points
+                    \draw [dashed] let
+                        \p1=($ (left intersection-1) - (right intersection-1) $),
+                        \p2=($ (left intersection-1)!sign(#1)*10mm!(right intersection-1) $),
+                        %\p2=($ (left intersection+1) - (right intersection+1) $),
+                        \p3=($ ({axis cs:0,0}) - (\p2) $),
+                        \n1={\x3/\x1}	% slope of tangent line
+                    in
+                        (\p2) -- +($ {\n1}*(\x1,\y1) $)
+	                        
+%                        		node[right,node font=\scriptsize,gray] {$y=$\y1/\x1*sign(#1) $x+$}
+%                            node [Point,fill=Tangent] (origin intersection) {}
+                            node [Point,fill=Curve] at (left intersection-1) {}
+                    ;
+                    % ----------
+                    % draw the horizontal line at the curve intersection point
+                    % plus the label above/below the line
+%                    \tikzmath{
+%                        coordinate \c1;
+%                        \c1=(left intersection-1) - (right intersection-1);
+%                        \slope=\cy1/\cx1*sign(#1);
+%                        \plusoffset = (#1+1);
+%                    }
+%                    \pgfmathsetmacro{\AboveBelow}{ \slope>0 ? "above" : "below" }
+%                    \draw [dashed]
+%                        ([xshift=sign(#1)*2.5mm] left intersection-1) --
+%                        (left intersection-1) --
+%                            node [\AboveBelow,node font=\scriptsize] {$y=\slope x+\plusoffset$}
+%                        (left intersection-1 -| origin intersection) --
+%                        +($ sign(#1)*(-2.5mm,0) $)
+%                            coordinate [pos=0.5] (a)
+%                    ;
+%                    % draw the horizontal line at the ordinate intersection point
+%                    \draw [dotted] (origin intersection)
+%                        +($ sign(#1)*(-2.5mm,0) $) --
+%                        (origin intersection);
+%                    % draw vertical line left/right of the ordinate
+%                    \pgfmathsetmacro{\LeftRight}{ #1<0 ? "right" : "left" }
+%                    \draw [stealth-stealth] (origin intersection)
+%                        +($ sign(#1)*(-1.25mm,0) $) -- (a)
+%                            node [midway,\LeftRight,node font=\scriptsize] {$p$}
+%                    ;
+%                    % ---------------------------------------------------------
+                        \endgroup
+                },
+            },
+        }
+    \makeatother
+\makeatletter
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
+
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\section{Section 4.5}
+
+\begin{enumerate}
+\setcounter{enumi}{41}
+	\item Find the limit. Use l'Hospital's Rule where appropriate. If there is a more elementary method, consider using it. If l'Hospital's rule does not apply, explain why.
+		$$\underset{x\rightarrow \infty}{\text{lim}}(1+\frac{a}{x})^{\frac{b}{x}}$$
+\setcounter{enumi}{53}
+	\item Use l’Hospital’s Rule to help find the asymptotes of $f$. Then use them, together with information from $f'$ and $f''$, to sketch the graph of $f$. Check your work with a graphing device.
+		$$f(x)=xe^{-x^2}$$
+\setcounter{enumi}{63}
+	\item Prove that $$\underset{x\rightarrow \infty}{\text{lim}}\frac{e^x}{x^n}=\infty$$ for any number $p>0$. This shows that the logarithmic function approaches $\infty$ more slowly than any power of $x$.
+\setcounter{enumi}{65}
+	\item If any object with mass $m$ is dropped from rest, one model for its speed $v$ after $t$ seconds, taking air resistance into account, is $$v=\frac{mg}{c}(1-e^{-\frac{ct}{m}})$$ where $g$ is the acceleration due to gravity and $c$ is a positive constant. 
+		\begin{enumerate}
+			\item Calculate $\underset{t\rightarrow \infty}{\text{lim}}v$. What is the meaning of this limit?
+			\item For fixed $t$, use l'Hospital's Rule to calculate the limit of $\underset{c\rightarrow 0^+}{\text{lim}}v$. What can you conclude about the velocity of a falling object in a vacuum?
+		\end{enumerate}
+\setcounter{enumi}{72}
+	\item If $f'$ is continuous, $f(2)=0$, and $f'(2)=7$, evaluate $$\underset{x\rightarrow 0}{\text{lim}} \frac{f(2+3x)+f(2+5x)}{x}$$
+\end{enumerate}
+
+
+\begin{enumerate}
+	\item $\underset{x\rightarrow \frac{\pi}{2}}{\text{lim}}\frac{\sin(x)-1}{x}$ Not indeterminate
+	\item $\underset{x\rightarrow \infty}{\text{lim}}(1+\frac{2}{x})^{3x}$ 
+	\begin{itemize}
+		\item $\ln(L)=3x\ln(1+\frac{2}{x})$
+		\item $\ln(L)=3\infty\ln(1+\frac{2}{\infty})$
+		\item $\ln(L)=3x\ln(1)$
+		\item $\ln(L)=\infty \cdot 0$
+		\item $0\cdot \infty$, so it is an indeterminate form.
+	\end{itemize}
+	\item $\underset{x\rightarrow 0^+}{\text{lim}}x^{\sin(x)}$
+\end{enumerate}
+
+
+%
+\end{document}

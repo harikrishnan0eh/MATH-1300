@@ -1,0 +1,408 @@
+\documentclass{article}
+
+\usepackage{calculator}
+\usepackage{calculus}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz,pgfplots,multicol}
+\usepackage[font=small,labelformat=empty]{caption}
+\usetikzlibrary{automata,positioning,arrows,patterns}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ (\hmwkClassInstructor\ \hmwkClassTime)}
+\rhead{\hmwkTitle}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{HW \#7}
+\newcommand{\hmwkDueDate}{March 9, 2017}
+\newcommand{\hmwkClass}{MATH 1300}
+\newcommand{\hmwkClassTime}{Section 005}
+\newcommand{\hmwkClassInstructor}{Professor Braden Balentine}
+\newcommand{\hmwkAuthorName}{\textbf{John Keller}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 10:00am}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+
+\usepackage{xcolor}
+    \colorlet{Curve}{red!75!black}
+    \colorlet{Tangent}{blue!75!black}
+\usepackage{pgfplots}
+    \pgfplotsset{compat=1.10}
+    \usetikzlibrary{
+        calc,
+        intersections,
+        math,
+    }
+    \makeatletter
+        \def\parsenode[#1]#2\pgf@nil{%
+            \tikzset{label node/.style={#1}}
+            \def\nodetext{#2}
+        }
+        \tikzset{
+            % define style for the points
+            Point/.style={
+                shape=circle,
+                inner sep=0pt,
+                minimum size=3pt,
+            },
+            add node at x/.style 2 args={
+                name path global=plot line,
+                /pgfplots/execute at end plot visualization/.append={
+                        \begingroup
+                        \@ifnextchar[{\parsenode}{\parsenode[]}#2\pgf@nil
+                    \path [name path global = position line #1-1]
+                        ({axis cs:#1,0}|-{rel axis cs:0,0}) --
+                        ({axis cs:#1,0}|-{rel axis cs:0,1});
+                    \path [xshift=1pt, name path global = position line #1-2]
+                        ({axis cs:#1,0}|-{rel axis cs:0,0}) --
+                        ({axis cs:#1,0}|-{rel axis cs:0,1});
+                    \path [
+                        name intersections={
+                            of={plot line and position line #1-1},
+                            name=left intersection
+                        },
+                        name intersections={
+                            of={plot line and position line #1-2},
+                            name=right intersection
+                        },
+                        label node/.append style={pos=1}
+                    ] (left intersection-1) -- (right intersection-1)
+                        node [label node]{\nodetext};
+                    % ---------------------------------------------------------
+                    % draw the tangent line from a bit right of the point on
+                    % the curve to the intersection with the ordinate
+                    % and draw the corresponding points
+                    \draw [dashed] let
+                        \p1=($ (left intersection-1) - (right intersection-1) $),
+                        \p2=($ (left intersection-1)!sign(#1)*10mm!(right intersection-1) $),
+                        %\p2=($ (left intersection+1) - (right intersection+1) $),
+                        \p3=($ ({axis cs:0,0}) - (\p2) $),
+                        \n1={\x3/\x1}	% slope of tangent line
+                    in
+                        (\p2) -- +($ {\n1}*(\x1,\y1) $)
+	                        
+%                        		node[right,node font=\scriptsize,gray] {$y=$\y1/\x1*sign(#1) $x+$}
+%                            node [Point,fill=Tangent] (origin intersection) {}
+                            node [Point,fill=Curve] at (left intersection-1) {}
+                    ;
+                    % ----------
+                    % draw the horizontal line at the curve intersection point
+                    % plus the label above/below the line
+%                    \tikzmath{
+%                        coordinate \c1;
+%                        \c1=(left intersection-1) - (right intersection-1);
+%                        \slope=\cy1/\cx1*sign(#1);
+%                        \plusoffset = (#1+1);
+%                    }
+%                    \pgfmathsetmacro{\AboveBelow}{ \slope>0 ? "above" : "below" }
+%                    \draw [dashed]
+%                        ([xshift=sign(#1)*2.5mm] left intersection-1) --
+%                        (left intersection-1) --
+%                            node [\AboveBelow,node font=\scriptsize] {$y=\slope x+\plusoffset$}
+%                        (left intersection-1 -| origin intersection) --
+%                        +($ sign(#1)*(-2.5mm,0) $)
+%                            coordinate [pos=0.5] (a)
+%                    ;
+%                    % draw the horizontal line at the ordinate intersection point
+%                    \draw [dotted] (origin intersection)
+%                        +($ sign(#1)*(-2.5mm,0) $) --
+%                        (origin intersection);
+%                    % draw vertical line left/right of the ordinate
+%                    \pgfmathsetmacro{\LeftRight}{ #1<0 ? "right" : "left" }
+%                    \draw [stealth-stealth] (origin intersection)
+%                        +($ sign(#1)*(-1.25mm,0) $) -- (a)
+%                            node [midway,\LeftRight,node font=\scriptsize] {$p$}
+%                    ;
+%                    % ---------------------------------------------------------
+                        \endgroup
+                },
+            },
+        }
+    \makeatother
+\makeatletter
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
+
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\section{Additional Problems}
+
+\begin{enumerate}
+	\item Determine where $f(x)=\text{arctan}(x^2-2x)$ is increasing.
+	$$\begin{align}
+		\frac{1}{1+(x^2-2x)}(2x-2) &> 0\\
+		\frac{2}{x-1} &> 0\\
+	\end{align}$$\\
+	$$(3,\infty)$$
+	\item The graph of $f(x)$ is shown and the table gives values of $(x)$ and $g'(x)$.
+	\begin{center}
+		\begin{minipage}[l]{0.45\linewidth}
+			\vspace{0pt}
+			\begin{center}
+		\pgfplotsset{width=4.5cm,height=4.5cm, ymax=5.5,xmax=5.5, axis equal,xtick={1,2,3,4},yticklabels={ , , ,4},ytick={1,2,3,4}}
+%		\pgfplotsset{xmin=-10,xmax=10,ymin=-4,ymax=6,soldot/.style={color=blue,only marks,mark=*}
+			\begin{tikzpicture}
+			\begin{axis}[axis lines=middle,minor y tick num=0,minor x tick num=0,tick style={black},grid style={solid, gray!20}]
+				\addplot[domain=0:2] {2*x};
+				\addplot[domain=2:4] {-2*x+8};
+				\addplot+[only marks,mark=*,mark options={fill=black,scale=0.7},text mark as node=false,black] coordinates {(0,0)(2,4)(4,0)};
+			\end{axis}
+		\end{tikzpicture}
+		\end{center}
+		\end{minipage}
+		\begin{minipage}[l]{0.45\linewidth}
+			\vspace{0pt}
+				\begin{tabular}{c|cccc}
+		        $x$     & 0 & 1 & 2 & 3   \\ \hline
+		        $g(x)$  & 4 & 3 & 2 & 1 \\ \hline
+		        $g'(x)$ & -1.1 & -0.9 & -1.2 & -0.8  
+				\end{tabular}
+		\end{minipage}
+	\end{center}
+	\begin{center}
+		(The function $f(x)$ is piecewise linear)
+	\end{center}
+		\begin{enumerate}
+			\item Given $h(x)=f(g(x))$, find $h'(1)$.\newline
+			-1.8
+			\item Given $k(x)=g(f(x))$, find $k'(3)$.\newline
+			1.44
+			\item Given $l(x)=g(g(x))$, find $l'(x)$.\newline
+			$g'(g(x))\cdot g'(x)$
+			\item Given $m(x)=\sqrt{f(x)}$, find $m'(1)$.\newline
+			$\frac{1}{\sqrt{2}}$
+		\end{enumerate}
+	\item The length of the day in Boulder (Latitude 40 N) can be modeled approximately by $$l(t)=-3\cos\Big(\frac{2\pi}{365}(t+10)\Big)+12$$ where $l$ is given in hours and $t$ is the day of the year.
+	\begin{enumerate}
+		\item Evaluate $l(355)$; fully interpret the result in the context of this problem, including units.
+		$$\begin{align}
+			l(355)&=-3\cos\Big(\frac{2\pi}{365}(355+10)\Big)+12\\
+			&=9 \text{ hours}
+		\end{align}$$
+		This answer simply means that on day number 355, the length of the day will be approximately 9 hours long.
+		\item Evaluate $l'(265)$; fully interpret the result in the context of this problem, including units.
+		$$\begin{align}
+			l'(t)&=\frac{6}{365}\pi \sin\Big(\frac{2}{365}\pi (265+10)\Big)\\
+			&=-\frac{6}{365}\pi \cos(\frac{\pi}{146})\\
+			&\approx -0.05 \text { hours/day}
+		\end{align}$$
+		This answer means that on day 265, the length of the day is changing at a rate of -0.05 hours per day.
+		\item Calculate when $l'(t)$ is largest. Explain.
+		\begin{center}
+		\pgfplotsset{width=14cm,height=7cm,ymax=0.06,ymin=-0.06}
+%		\pgfplotsset{xmin=-10,xmax=10,ymin=-4,ymax=6,soldot/.style={color=blue,only marks,mark=*}
+			\begin{tikzpicture}
+			\begin{axis}[axis lines=middle,minor x tick num=1,minor y tick num=1,tick style={black},grid style={solid, gray!20}]
+				%\addplot[samples=200][domain=-5:500]{-3*cos(deg(((2*3.145)/(365))*(x+10)))+12};
+				\addplot[samples=200][domain=-5:300]{(6/365)*3.145*sin(deg((2/(365))*3.145*(x+10)))};
+				\addplot[domain=0:175,dotted]{0.052};
+				%\addplot+[only marks,mark=*,mark options={fill=black,scale=0.7},text mark as node=false,black] coordinates {(0,0)(2,4)(4,0)};
+			  \legend{$l'(x)$}
+			\end{axis}
+		\end{tikzpicture}
+		\end{center}
+		The largest value for $l'(t)$ is approximately 0.052 at 80 days.
+	\end{enumerate}
+	\item The U.S. gross domestic product can be modeled by $$P(t)=4.351e^{0.0368t}$$ where $P$ is given in billions of dollars and $t$ is years since 1970.
+	 \begin{enumerate}
+	 	\item Find $P(244)$; fully interpret the result in the context of this problem, including units.
+	 	$$\begin{align}
+	 		P(244)&=4.351e^{0.0368(244)}\\
+	 		&= 34,530.8 \text{ billion dollars}
+	 	\end{align}$$
+	 	This answer means that in the year 1970+244, the GDP can be estimated to be \$34,530.8 billion using the model $P(t)=4.351e^{0.0368t}$.
+	 	\item When was the GDP one trillion dollars?
+	 	$$\begin{align}
+	 		1000 &= 4.351e^{0.0368t}\\
+	 		t&= 147.754 \text{ years after 1970}
+	 	\end{align}$$
+	 	\item How many years does it take for the GDP to double?
+	 	$$\begin{align}
+	 		P(0)&=4.351e^{0.0368(0)}=\$4.351b
+	 		4.351 * 2 &= 4.351e^{0.0368t}\\
+	 		x&= 18.8355\text{ years past 1970}
+	 	\end{align}$$
+	 	\item What is $P'(224)$? Again, fully interpret (including units).
+	 	$$\begin{align}
+	 		P'(224)&= 0.160117e^{0.0368(224)}\\
+	 		&= 608.715 \text{ billion dollars}
+	 	\end{align}$$
+	 	This answer means that at 1970+224, the GDP is changing at \$608.715 b per year.
+	 \end{enumerate}
+\end{enumerate}
+
+\section{Section 3.6}
+
+\begin{enumerate}
+\setcounter{enumi}{31}
+	\item Find $y'$ if $\tan^{-1}(xy)=1+x^2y$.
+	$$\begin{align}
+		\arctan(xy)&=1+x^2y\\
+		\frac{1}{1+(xy)^2}(y+\frac{dy}{dx}x)&=2xy+\frac{dy}{dx}x^2\\
+		\frac{y+\frac{dy}{dx}x }{1+(xy)^2}&=(2xy+\frac{dy}{dx}x^2)\\
+		\frac{y+\frac{dy}{dx}x }{2y+\frac{dy}{dx}x }&= x(1+(xy)^2)\\
+		y+\frac{dy}{dx}x&=2xy+2x^3y^2+\frac{dy}{dx}x^2+\frac{dy}{dx}x^4y^2\\
+		\frac{dy}{dx}x-\frac{dy}{dx}x^2-\frac{dy}{dx}x^4y^2&=2xy+2x^3y^2-y\\
+		\frac{dy}{dx}(x-x^2-x^4y^2)&=2xy+2x^3y^2-y\\
+		\frac{dy}{dx}&=\frac{2xy+2x^3y^2-y}{x-x^2-x^4y^2}
+	\end{align}$$
+\setcounter{enumi}{40}
+	\item
+		\begin{enumerate}
+			\item Suppose $f$ is a one-to-one differentiable function and its inverse function $f^{-1}$ is also differentiable. Use implicit differentiation to show that $$(f^{-1})'(x)=\frac{1}{f'(f^{-1}(x))}$$ provided that the denominator is not 0.
+			$$\begin{align}
+				f\circ f^{-1}(x)&=x\\
+				f'(f^{-1}(x))\cdot (f^{-1})'(x) &= 1\\
+				(f^{-1})'(x)&=\frac{1}{f'(f^{-1}(x))}
+			\end{align}$$
+			\item If $f(4)=5$ and $f'(4)=\frac{2}{3}$, find $(f^{-1})'(5)$.
+			$$\begin{align}
+				(f^{-1})'(5)&=\frac{1}{f'(f^{-1}(5))}\\
+				&= \frac{1}{f'(4)}\\
+				&= \frac{3}{2}
+			\end{align}$$
+		\end{enumerate}
+	\item
+		\begin{enumerate}
+			\item Show that $f(x)=2x+\cos x$ is one-to-one.
+			$$\begin{align}
+				f'(x)&= 2-\sin(x) \qquad \text{Because f'(x) is a constant sign, f(x) is one-to-one}
+			\end{align}$$
+			\item What is the value of $f^{-1}(1)$?
+			$$\begin{align}
+				f^{-1}(1)&=
+			\end{align}$$
+			\item Use the formula from Exercise 41(a) to find $(f^{-1})'(1)$.
+			$$\begin{align}
+				(f^{-1})'(1)&=\frac{1}{f'(f^{-1}(1))}\\
+				\\ \\ \\
+			\end{align}$$
+		\end{enumerate}
+\setcounter{enumi}{21}
+	\item Find the derivative of $f(x)=x\ln(\arctan x)$
+	$$\begin{align}
+		f(x)&=x\ln(\arctan x)\\
+		u&=\arctan(x)\\
+		u'&=\frac{1}{1+x^2}\\
+		f'(x)&=\ln(u)+x\frac{1}{u}u'\\
+		f'(x)&=\ln(\arctan x)+x\frac{1}{\arctan x}\Big(\frac{1}{1+x^2}\Big)\\
+		f'(x)&=\ln(\arctan x)+\frac{x}{(\arctan x)(1+x^2)}
+	\end{align}$$
+\end{enumerate}
+
+
+%
+\end{document}
