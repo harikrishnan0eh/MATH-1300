@@ -244,34 +244,60 @@
 \begin{enumerate}
 \setcounter{enumi}{41}
 	\item Find the limit. Use l'Hospital's Rule where appropriate. If there is a more elementary method, consider using it. If l'Hospital's rule does not apply, explain why.
-		$$\underset{x\rightarrow \infty}{\text{lim}}(1+\frac{a}{x})^{\frac{b}{x}}$$
+		$$\begin{aligned}
+			&\underset{x\rightarrow \infty}{\text{lim}}\Big(1+\frac{a}{x}\Big)^{\frac{b}{x}} \\
+			\ln(L)&=\frac{b}{x}\ln\Big(1+\frac{a}{x}\Big)\\
+			\ln(L)&=\frac{b}{\infty}\ln\Big(1+\frac{a}{\infty}\Big)\\
+			\ln(L)&=\frac{b}{\infty}\ln(1)\\
+			\ln(L)&=0 \cdot 0\\
+			&= 0
+		\end{aligned}$$
 \setcounter{enumi}{53}
-	\item Use l’Hospital’s Rule to help find the asymptotes of $f$. Then use them, together with information from $f'$ and $f''$, to sketch the graph of $f$. Check your work with a graphing device.
-		$$f(x)=xe^{-x^2}$$
+	\item Use l'Hospital's Rule to help find the asymptotes of $f$. Then use them, together with information from $f'$ and $f''$, to sketch the graph of $f$. Check your work with a graphing device.
+		$$\begin{aligned}
+f(x)&=xe^{-x^2}\\
+f'(x)&=e^{-x^2}(1-2x^2)\\
+f''(x)&= 2e^{-x^2}x(2x^2-3)
+\end{aligned}$$
+\begin{center}
+		  		\pgfplotsset{width=\linewidth,height=6cm,xmin=-3,xmax=3,ymin=-0.5,ymax=0.5}
+				\begin{tikzpicture}
+				\begin{axis}[axis lines=middle]
+					\addplot[samples=200] {x*e^(-x^2)};
+				\end{axis}
+			\end{tikzpicture}
+\end{center}
 \setcounter{enumi}{63}
 	\item Prove that $$\underset{x\rightarrow \infty}{\text{lim}}\frac{e^x}{x^n}=\infty$$ for any number $p>0$. This shows that the logarithmic function approaches $\infty$ more slowly than any power of $x$.
+	 $$\begin{aligned}
+\underset{x\rightarrow \infty}{\text{lim}}\frac{e^x}{nx^{n-1}}\\
+\frac{\infty}{n\infty^{n-1}}\\
+\frac{\infty}{\infty}
+\end{aligned}$$
 \setcounter{enumi}{65}
 	\item If any object with mass $m$ is dropped from rest, one model for its speed $v$ after $t$ seconds, taking air resistance into account, is $$v=\frac{mg}{c}(1-e^{-\frac{ct}{m}})$$ where $g$ is the acceleration due to gravity and $c$ is a positive constant. 
 		\begin{enumerate}
-			\item Calculate $\underset{t\rightarrow \infty}{\text{lim}}v$. What is the meaning of this limit?
-			\item For fixed $t$, use l'Hospital's Rule to calculate the limit of $\underset{c\rightarrow 0^+}{\text{lim}}v$. What can you conclude about the velocity of a falling object in a vacuum?
+			\item Calculate $\underset{t\rightarrow \infty}{\text{lim}}v$. What is the meaning of this limit?\newline
+			$e^{-\frac{ct}{m}}$ approaches 0 as $t$ approaches infinity. This means that the limit is $\frac{mg}{c}$. The meaning of this limit is the maximum (or terminal) speed of an object when it is dropped. This speed is when the force of gravity is equal to the resistance of air.
+			\item For fixed $t$, use l'Hospital's Rule to calculate the limit of $\underset{c\rightarrow 0^+}{\text{lim}}v$. What can you conclude about the velocity of a falling object in a vacuum?\newline
+			$$\begin{align}
+				&\underset{c\rightarrow 0^+}{\text{lim}}v\\
+				&\underset{c\rightarrow 0^+} {\text{lim}} mg(\frac{1-e^{-\frac{ct}{m}}}{c})\\
+				&\underset{c\rightarrow 0^+} {\text{lim}} mg(\frac{1-e^{-\frac{t}{me}}}{1})=tg\\
+			\end{align}$$
+			The velocity of the falling object in a vacuum is simply $tg$.
 		\end{enumerate}
 \setcounter{enumi}{72}
-	\item If $f'$ is continuous, $f(2)=0$, and $f'(2)=7$, evaluate $$\underset{x\rightarrow 0}{\text{lim}} \frac{f(2+3x)+f(2+5x)}{x}$$
-\end{enumerate}
-
-
-\begin{enumerate}
-	\item $\underset{x\rightarrow \frac{\pi}{2}}{\text{lim}}\frac{\sin(x)-1}{x}$ Not indeterminate
-	\item $\underset{x\rightarrow \infty}{\text{lim}}(1+\frac{2}{x})^{3x}$ 
-	\begin{itemize}
-		\item $\ln(L)=3x\ln(1+\frac{2}{x})$
-		\item $\ln(L)=3\infty\ln(1+\frac{2}{\infty})$
-		\item $\ln(L)=3x\ln(1)$
-		\item $\ln(L)=\infty \cdot 0$
-		\item $0\cdot \infty$, so it is an indeterminate form.
-	\end{itemize}
-	\item $\underset{x\rightarrow 0^+}{\text{lim}}x^{\sin(x)}$
+	\item If $f'$ is continuous, $f(2)=0$, and $f'(2)=7$, evaluate $$\underset{x\rightarrow 0}{\text{lim}} \frac{f(2+3x)+f(2+5x)}{x}$$\newline
+	$$\begin{align}
+		&\frac{f(2+3\cdot0)-f(2+5\cdot 0}{0}\\
+		&=\frac{0}{0}\\
+		&\frac{\frac{d}{dx}(f(2+3x))-\frac{d}{dx}(f(2+5x))}{\frac{d}{dx}(0)}\\
+		&=3\cdot f'(2+3x)+5\cdot f'(2+5x)\\
+		&-3\cdot f'(2)+ 5\cdot f'(2)\\
+		&=3\cdot 7 + 5\cdot 7\\
+		&= 56
+	\end{align}$$
 \end{enumerate}
 
 
