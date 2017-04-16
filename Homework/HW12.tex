@@ -1,0 +1,352 @@
+\documentclass{article}
+
+\usepackage{calculator}
+\usepackage{calculus}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz,pgfplots,multicol}
+\usepackage[font=small,labelformat=empty]{caption}
+\usetikzlibrary{automata,positioning,arrows,patterns}
+\usepackage{enumitem}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ (\hmwkClassInstructor\ \hmwkClassTime)}
+\rhead{\hmwkTitle}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{HW \#12}
+\newcommand{\hmwkDueDate}{April 13, 2017}
+\newcommand{\hmwkClass}{MATH 1300}
+\newcommand{\hmwkClassTime}{Section 005}
+\newcommand{\hmwkClassInstructor}{Professor Braden Balentine}
+\newcommand{\hmwkAuthorName}{\textbf{John Keller}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 10:00am}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+
+\usepackage{xcolor}
+    \colorlet{Curve}{red!75!black}
+    \colorlet{Tangent}{blue!75!black}
+\usepackage{pgfplots}
+    \pgfplotsset{compat=1.10}
+    \usetikzlibrary{
+        calc,
+        intersections,
+        math,
+    }
+    \makeatletter
+        \def\parsenode[#1]#2\pgf@nil{%
+            \tikzset{label node/.style={#1}}
+            \def\nodetext{#2}
+        }
+        \tikzset{
+            % define style for the points
+            Point/.style={
+                shape=circle,
+                inner sep=0pt,
+                minimum size=3pt,
+            },
+            add node at x/.style 2 args={
+                name path global=plot line,
+                /pgfplots/execute at end plot visualization/.append={
+                        \begingroup
+                        \@ifnextchar[{\parsenode}{\parsenode[]}#2\pgf@nil
+                    \path [name path global = position line #1-1]
+                        ({axis cs:#1,0}|-{rel axis cs:0,0}) --
+                        ({axis cs:#1,0}|-{rel axis cs:0,1});
+                    \path [xshift=1pt, name path global = position line #1-2]
+                        ({axis cs:#1,0}|-{rel axis cs:0,0}) --
+                        ({axis cs:#1,0}|-{rel axis cs:0,1});
+                    \path [
+                        name intersections={
+                            of={plot line and position line #1-1},
+                            name=left intersection
+                        },
+                        name intersections={
+                            of={plot line and position line #1-2},
+                            name=right intersection
+                        },
+                        label node/.append style={pos=1}
+                    ] (left intersection-1) -- (right intersection-1)
+                        node [label node]{\nodetext};
+                    % ---------------------------------------------------------
+                    % draw the tangent line from a bit right of the point on
+                    % the curve to the intersection with the ordinate
+                    % and draw the corresponding points
+                    \draw [dashed] let
+                        \p1=($ (left intersection-1) - (right intersection-1) $),
+                        \p2=($ (left intersection-1)!sign(#1)*10mm!(right intersection-1) $),
+                        %\p2=($ (left intersection+1) - (right intersection+1) $),
+                        \p3=($ ({axis cs:0,0}) - (\p2) $),
+                        \n1={\x3/\x1}	% slope of tangent line
+                    in
+                        (\p2) -- +($ {\n1}*(\x1,\y1) $)
+	                        
+%                        		node[right,node font=\scriptsize,gray] {$y=$\y1/\x1*sign(#1) $x+$}
+%                            node [Point,fill=Tangent] (origin intersection) {}
+                            node [Point,fill=Curve] at (left intersection-1) {}
+                    ;
+                    % ----------
+                    % draw the horizontal line at the curve intersection point
+                    % plus the label above/below the line
+%                    \tikzmath{
+%                        coordinate \c1;
+%                        \c1=(left intersection-1) - (right intersection-1);
+%                        \slope=\cy1/\cx1*sign(#1);
+%                        \plusoffset = (#1+1);
+%                    }
+%                    \pgfmathsetmacro{\AboveBelow}{ \slope>0 ? "above" : "below" }
+%                    \draw [dashed]
+%                        ([xshift=sign(#1)*2.5mm] left intersection-1) --
+%                        (left intersection-1) --
+%                            node [\AboveBelow,node font=\scriptsize] {$y=\slope x+\plusoffset$}
+%                        (left intersection-1 -| origin intersection) --
+%                        +($ sign(#1)*(-2.5mm,0) $)
+%                            coordinate [pos=0.5] (a)
+%                    ;
+%                    % draw the horizontal line at the ordinate intersection point
+%                    \draw [dotted] (origin intersection)
+%                        +($ sign(#1)*(-2.5mm,0) $) --
+%                        (origin intersection);
+%                    % draw vertical line left/right of the ordinate
+%                    \pgfmathsetmacro{\LeftRight}{ #1<0 ? "right" : "left" }
+%                    \draw [stealth-stealth] (origin intersection)
+%                        +($ sign(#1)*(-1.25mm,0) $) -- (a)
+%                            node [midway,\LeftRight,node font=\scriptsize] {$p$}
+%                    ;
+%                    % ---------------------------------------------------------
+                        \endgroup
+                },
+            },
+        }
+    \makeatother
+\makeatletter
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\section{Section 4.4}
+
+\begin{enumerate}
+\setcounter{enumi}{11}
+	\item Sketch the graph by hand using asymptotes and intercepts, but not derivatives. Then use your sketch as a guide to producing graphs (with a graphing device) that display the major features of the curve. Use these graphs to estimate the maximum and mini- mum values. $$f(x)=\frac{(2x+3)^2(x-2)^5}{x^3(x-5)^2}$$
+	\begin{center}
+		  		\pgfplotsset{width=\linewidth,height=8cm,ymin=-8,ymax=8,xmin=-4,xmax=4}
+				\begin{tikzpicture}
+				\begin{axis}[axis lines=middle]
+%					\addplot[samples=200,domain=-3:4] {((2*x-3)^2*(x-2)^5)/(x^3*(x-5)^2)};
+%					\addplot[samples=200,domain=1:3] {((2*x-3)^2(x-2)^5)/(x^3(x-5)^2)};
+				\end{axis}
+			\end{tikzpicture}
+\end{center}
+\setcounter{enumi}{13}
+	\item If $f$ is the function of Exercise 12, find $f'$ and $f''$ and use their graphs to estimate the intervals of increase and decrease and concavity of $f$.\newline
+	\textit{Include graphs of $f'$ and $f''$ to fully explain the behavior of f. Use technology to calculate these derivatives.}\newline
+	$f'(x)=\frac{2 (-2 + x)^4 (-135 - 120 x - 62 x^2 - 22 x^3 + 4 x^4)}{(-5 + x)^3 x^4}$\newline
+	$f''(x)=\frac{2 (-2 + x)^3 (5400 + 1710 x + 805 x^2 + 460 x^3 + 216 x^4 - 56 x^5 + 4 x^6)}{(-5 + x)^4 x^5}$
+		\begin{center}
+		  		\pgfplotsset{width=\linewidth,height=8cm}
+				\begin{tikzpicture}
+				\begin{axis}[axis lines=middle]
+					\addplot[samples=200,domain=-2:-0.932][<->] {(2*(-2+x)^4*(-135-120*x-62*x^2-22*x^3+4*x^4))/((-5+x)^3*x^4)};
+					\addplot[samples=200,domain=0.75:3.62][<->] {(2*(-2+x)^4*(-135-120*x-62*x^2-22*x^3+4*x^4))/((-5+x)^3*x^4)};
+					\addplot[samples=200,domain=7.8:9.3][<->] {(2*(-2+x)^4*(-135-120*x-62*x^2-22*x^3+4*x^4))/((-5+x)^3*x^4)};
+					
+					\addplot[samples=200,domain=-10:-1.3,dotted][<->] {(2*(-2+x)^3*(5400+1710*x+805*x^2+460*x^3+216*x^4-56*x^5+4*x^6))/((-5+x)^4*x^5};
+					\addplot[samples=200,domain=1.32:3.264,dotted][<->] {(2*(-2+x)^3*(5400+1710*x+805*x^2+460*x^3+216*x^4-56*x^5+4*x^6))/((-5+x)^4*x^5};
+					\addplot[samples=200,domain=8.23:25,dotted][<->] {(2*(-2+x)^3*(5400+1710*x+805*x^2+460*x^3+216*x^4-56*x^5+4*x^6))/((-5+x)^4*x^5};
+					
+				\end{axis}
+			\end{tikzpicture}
+\end{center}
+	%
+\end{enumerate}
+
+\section{Section 4.6}
+\begin{enumerate}
+\setcounter{enumi}{13}
+	\item A rectangular storage container with an open top is to have a volume of 10 m$^3$. The length of the base it twice the width. Material for the base costs \$10 per square meter. Material for the sides costs \$6 per square meter. Find the cost of materials for the cheapest such container.$$\begin{align}
+		Volume: \qquad & V = Lwh\\
+		&10 = 2w\cdot w \cdot h\\
+		&h = \frac{5}{w^2}\\
+		Cost: \qquad & C = 10(Lw) + 2(6(hw))+2(6(hL))\\
+		& C' = 40w -180w^{-2}\\
+		Critical\ Points: \qquad & w = 1.65\ m\\
+		& L = 3.3\ m\\
+		& h = 1.84\ m\\
+		Cheapest\ Cost: \qquad & 10(3.3)(1.65)+2(6(1.84)(1.65))+2(6(1.84)(3.3)) = \$165.75
+	\end{align}$$
+\setcounter{enumi}{33}
+	\item A boat leaves a dock at 2:00 PM and travels due south at a speed of 20 km/h. Another boat is headed due east at 15 km/h and reaches the same dock at 3:00 PM. At what time were the two boats closest together?
+	$$\begin{align}
+		\text{South boat:} & 20\ km/hr \text{ with a distance of } x=20t\\
+		\text{Other boat:} & 15\ km/hr \text{ with a distance of } y=10(1-t)\\
+		\text{Distance }&= d^2 = (15(1-t))^2+(20t)^2\\
+		D′ &= −2(15)2(1 − t) + 2(20)2t \\
+		t&=\frac{2(15)^2}{2(15^2+20^2)}=\boxed{\frac{9}{20}}
+	\end{align}$$
+\setcounter{enumi}{47}
+	\item The manager of a 100-unit apartment complex knows from experience that all units will be occupied if the rent is \$800 per month. A market survey suggests that, on average, one additional unit will remain vacant for each \$10 increase in rent. What rent should the manager change to maximize revenue?
+	$$\begin{align}
+		p(x)&=-10x^1800\\
+		R(x)&=-10x^2+1800x\\
+		R'(x)&=-20+1800x\\
+		0&=-20+1800x\\
+		x&=90\\
+		R(0)&=0\\
+		R(90)&=81,000\\
+		r(100)&=80,000\\
+	\end{align}$$
+	The revenue is maximized when the manager rents 90 units, or charges \$900 per month.
+\setcounter{enumi}{21}
+	\item A cylindrical can without a top is made to contain 2,000 cm$^3$ of liquid. Find the dimensions that will minimize the cost of the metal to make the can.
+	$$\begin{align}
+		h&=\frac{V}{\pi r^2}\\
+		s(r)&=\frac{2V}{r}+\pi r^2\\
+		s'(r)&=-\frac{2V}{r^2}+2\pi r\\
+		0&=-\frac{2V}{r^2}+2\pi r\\
+		r&=\sqrt[3]{\frac{V}{\pi}}\\
+		r&=\boxed{\sqrt[3]{\frac{2000}{\pi}}}
+	\end{align}$$
+\end{enumerate}
+
+\section{Section 4.8}
+\begin{enumerate}
+\setcounter{enumi}{15}
+	\item Find the most general antiderivative of the function (Check your answer by differentiation.) $$\begin{align}
+		f(x)&=\frac{2+x^2}{1+x^2}\\
+		&=x+\tan^{-1}(x)+C
+	\end{align}$$
+\setcounter{enumi}{45}
+	\item Two balls are thrown upward from the edge of the cliff in Example 6. The first is thrown with a speed of 48 ft/s and the other is thrown a second later with a speed of 24 ft/s. Do the balls ever pass each other?
+	$$\begin{align}
+		-16t^2+16t+464&=-16t^2+24t+432\\
+		t&=4
+	\end{align}$$
+	The first ball is traveling faster, and will pass the second ball, hitting the ground first.
+\end{enumerate}
+
+\section{Required Problem}
+Batman was driving the Batmobile at 90 mph (132 ft/sec), when he sees a brick wall directly ahead. When the Batmobile is 400 feet from the wall, he slams on the brakes, decelerating at a constant rate of \(22 \text{ft/sec}^2\). Does he stop before he hits the brick wall? If so, how many feet to spare? If not, what is his impact speed? Now the Joker had been driving next to him, also at 90 mph. But the Joker did not hit his brakes as soon as Batman, continuing for 1 second longer than Batman before hitting his brakes, decelerating at a constant rate of \(22 \text{ft/sec}^2\). How fast is he going when he hits the wall? (Don't worry about Joker - he jettisoned at the last instant, to fight for another day!)
+
+$$\begin{align}
+	v(t)&=132-22t\\
+	0&=132-22t\\
+	t&=6\\
+	s(t)&=132t-11t^2\\
+	&= 132(6)-11(36) = 396
+\end{align}$$
+The batmobile stops after 396 feet, which is 4 feet short of the wall.
+\end{document}
