@@ -1,0 +1,306 @@
+\documentclass{article}
+
+\usepackage{calculator}
+\usepackage{calculus}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz,pgfplots,multicol}
+\usepackage[font=small,labelformat=empty]{caption}
+\usetikzlibrary{automata,positioning,arrows,patterns}
+\usepackage{enumitem}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ (\hmwkClassInstructor\ \hmwkClassTime)}
+\rhead{\hmwkTitle}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{HW \#13}
+\newcommand{\hmwkDueDate}{April 20, 2017}
+\newcommand{\hmwkClass}{MATH 1300}
+\newcommand{\hmwkClassTime}{Section 005}
+\newcommand{\hmwkClassInstructor}{Professor Braden Balentine}
+\newcommand{\hmwkAuthorName}{\textbf{John Keller}}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 10:00am}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\hmwkAuthorName}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+
+\usepackage{xcolor}
+    \colorlet{Curve}{red!75!black}
+    \colorlet{Tangent}{blue!75!black}
+\usepackage{pgfplots}
+    \pgfplotsset{compat=1.10}
+    \usetikzlibrary{
+        calc,
+        intersections,
+        math,
+    }
+    \makeatletter
+        \def\parsenode[#1]#2\pgf@nil{%
+            \tikzset{label node/.style={#1}}
+            \def\nodetext{#2}
+        }
+        \tikzset{
+            % define style for the points
+            Point/.style={
+                shape=circle,
+                inner sep=0pt,
+                minimum size=3pt,
+            },
+            add node at x/.style 2 args={
+                name path global=plot line,
+                /pgfplots/execute at end plot visualization/.append={
+                        \begingroup
+                        \@ifnextchar[{\parsenode}{\parsenode[]}#2\pgf@nil
+                    \path [name path global = position line #1-1]
+                        ({axis cs:#1,0}|-{rel axis cs:0,0}) --
+                        ({axis cs:#1,0}|-{rel axis cs:0,1});
+                    \path [xshift=1pt, name path global = position line #1-2]
+                        ({axis cs:#1,0}|-{rel axis cs:0,0}) --
+                        ({axis cs:#1,0}|-{rel axis cs:0,1});
+                    \path [
+                        name intersections={
+                            of={plot line and position line #1-1},
+                            name=left intersection
+                        },
+                        name intersections={
+                            of={plot line and position line #1-2},
+                            name=right intersection
+                        },
+                        label node/.append style={pos=1}
+                    ] (left intersection-1) -- (right intersection-1)
+                        node [label node]{\nodetext};
+                    % ---------------------------------------------------------
+                    % draw the tangent line from a bit right of the point on
+                    % the curve to the intersection with the ordinate
+                    % and draw the corresponding points
+                    \draw [dashed] let
+                        \p1=($ (left intersection-1) - (right intersection-1) $),
+                        \p2=($ (left intersection-1)!sign(#1)*10mm!(right intersection-1) $),
+                        %\p2=($ (left intersection+1) - (right intersection+1) $),
+                        \p3=($ ({axis cs:0,0}) - (\p2) $),
+                        \n1={\x3/\x1}	% slope of tangent line
+                    in
+                        (\p2) -- +($ {\n1}*(\x1,\y1) $)
+	                        
+%                        		node[right,node font=\scriptsize,gray] {$y=$\y1/\x1*sign(#1) $x+$}
+%                            node [Point,fill=Tangent] (origin intersection) {}
+                            node [Point,fill=Curve] at (left intersection-1) {}
+                    ;
+                    % ----------
+                    % draw the horizontal line at the curve intersection point
+                    % plus the label above/below the line
+%                    \tikzmath{
+%                        coordinate \c1;
+%                        \c1=(left intersection-1) - (right intersection-1);
+%                        \slope=\cy1/\cx1*sign(#1);
+%                        \plusoffset = (#1+1);
+%                    }
+%                    \pgfmathsetmacro{\AboveBelow}{ \slope>0 ? "above" : "below" }
+%                    \draw [dashed]
+%                        ([xshift=sign(#1)*2.5mm] left intersection-1) --
+%                        (left intersection-1) --
+%                            node [\AboveBelow,node font=\scriptsize] {$y=\slope x+\plusoffset$}
+%                        (left intersection-1 -| origin intersection) --
+%                        +($ sign(#1)*(-2.5mm,0) $)
+%                            coordinate [pos=0.5] (a)
+%                    ;
+%                    % draw the horizontal line at the ordinate intersection point
+%                    \draw [dotted] (origin intersection)
+%                        +($ sign(#1)*(-2.5mm,0) $) --
+%                        (origin intersection);
+%                    % draw vertical line left/right of the ordinate
+%                    \pgfmathsetmacro{\LeftRight}{ #1<0 ? "right" : "left" }
+%                    \draw [stealth-stealth] (origin intersection)
+%                        +($ sign(#1)*(-1.25mm,0) $) -- (a)
+%                            node [midway,\LeftRight,node font=\scriptsize] {$p$}
+%                    ;
+%                    % ---------------------------------------------------------
+                        \endgroup
+                },
+            },
+        }
+    \makeatother
+\makeatletter
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\section{Section 5.1}
+\begin{enumerate}
+\setcounter{enumi}{11}
+	\item Speedometer readings for a motorcycle at 12-second intervals are given in the table.
+	\begin{center}
+			\begin{tabular}{ | c | c | c | c | c | c | c | }
+			  \hline     
+			  $t(s)$ & 0 & 12 & 24 & 36 & 48 & 60 \\ \hline
+			  $v(\text{ft/s})$ & 30 & 28 & 25 & 22 & 24 & 27 \\ \hline
+			\end{tabular}
+		\end{center}
+	\begin{enumerate}
+		\item Estimate the distance traveled by the motorcycle during this time period using the velocities at the beginning of the time intervals.
+		$$\begin{align}
+30(12)+28(12)+25(12)+22(12)+24(12)&=1548\text{ ft}
+		\end{align}$$
+		\item Give another estimate using the velocities at the end of the time periods.
+		$$\begin{align}
+28(12)+25(12)+22(12)+24(12)+27(12)&=1512\text{ ft}
+		\end{align}$$
+		\item Are your estimates in parts (a) and (b) upper and lower estimates? Explain.\newline
+		The estimates are neither upper nor lower. 
+	\end{enumerate}
+\setcounter{enumi}{17}
+	\item Use Definition 2 to find an expression for the area under the graph of $f$ as a limit. Do not evaluate the limit. $$f(x)=x^2 + \sqrt{1+2x}, \quad 4 \leq x \leq 7$$
+	$$\begin{align}
+		\Delta x &= \frac{7-4}{n}= \frac{3}{n}\\
+		x_i&= a+i\Deltax=4+i\Big(\frac{3}{n}\Big)\\
+		f(x_i)&=f(x
+		\sum_{i=4}^{7} f\Big(4+i\Big(\frac{3}{n}\Big)\Big)\frac{3}{n}
+	\end{align}$$
+\setcounter{enumi}{21}
+	\item \begin{enumerate}
+		\item Use Definition 2 to find an expression for the area under the curve $y=x^3$ for 0 to 1 as a limit.
+$$A=\lim_{n \to \infty} R_{n} = \lim_{n \to \infty}(f(x_{1})\Delta x + f(x_{2})\Delta x + . . . + f(x_{n})\Delta x)$$
+		\item The following formula for the sum of the cubes of the first $n$ integers is proved in Appendix F. Use it to evaluate the limit in part (a).
+				$$\begin{align}
+\Delta x = \frac{1}{n}\\
+		\lim_{n \to \infty}(\frac{n(n+1)}{2})^{2}\frac{1}{n}
+			\end{align}
+$$
+	\end{enumerate}
+\end{enumerate}
+
+\section{Section 5.2}
+\begin{enumerate}
+\setcounter{enumi}{41}
+	\item If $\int_{1}^{5} f(x) dx=12$ and $\int_{4}^{5} f(x) dx=3.6$, find $\int_{1}^{4} f(x) dx$.\pagebreak
+\setcounter{enumi}{47}
+	\item If $\int_{2}^{x} f(t) dt$, where $f$ is the function whose graph is given, which of the following values is largest?
+	\begin{enumerate}
+		\item $F(0)$\newline\newline
+		\item $F(1)$\newline\newline
+		\item $F(2)$\newline\newline
+		\item $F(3)$\newline\newline
+		\item $F(4)$\newline\newline
+	\end{enumerate}
+	\begin{center}
+		\includegraphics[width=5cm]{images/52pr48.png}
+	\end{center}
+	\item Each of the regions $A$, $B$, and $C$ bounded by the graph of $f$ and the x-axis has area 3. Find the value of $$\int_{-4}^{2} [f(x)+2x+5] dx$$
+	\begin{center}
+		\includegraphics[width=5cm]{images/52pr49.png}
+	\end{center}
+\end{enumerate}
+
+\end{document}
