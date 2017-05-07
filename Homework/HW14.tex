@@ -244,11 +244,15 @@
 	\begin{center}
 		\includegraphics[width=3cm]{images/53pr50}
 	\end{center}
-	\vspace{7cm}
+	$$\begin{align}
+		x=y^4\text{ on }[0,1]\\
+		\int_0^1(y^4)dy\\
+		y\frac{5}{5}\Bigg]_0^1&=\boxed{\frac{1}{5}}
+	\end{align}$$
 \setcounter{enumi}{55}
 	\item If $f(x)$ is the slope of a trail at a distance of $x$ miles from the start of the trail, what does $\int_{3}^{5}f(x)dx$ represent?\newline
 	\begin{center}
-		$\int_{3}^{5}f(x)dx$ represents the change in slope between miles 3 and 5 of the trail.
+		$\int_{3}^{5}f(x)dx$ represents the change in height (or elevation) between miles 3 and 5 of the trail.
 	\end{center}
 \setcounter{enumi}{57}
 	\item If the units for $x$ are feet and the units for $a(x)$ are pounds per foot, what are the units for $da/dx$? What units does $\int_{2}^{8}f(x)ax$ have?\newline
@@ -261,7 +265,7 @@
 		\text{total mass}&=\int_{0}^{4}(9+2\sqrt{x})dx\\
 		&=\left[9x+\frac{4}{3}x^{\frac{3}{2}}\right]_0^4\\
 		&=36+\frac{32}{3}-(0+0)\\
-		&=\frac{140}{3}
+		&=\frac{140}{3}\text{ kg}
 	\end{align}$$
 \setcounter{enumi}{67}
 	\item Water flows into and out of a storage tank. A graph of the rate of change $r(t)$ of the volume of water in the tank, in liters per day, is shown, If the amount of water in the tank at time $t=0$ is 25,000 L, use the Midpoint Rule to estimate the amount of water four days later.
@@ -275,12 +279,18 @@
 		\Delta t &= 1\\
 		\int_{0}^{\Delta}r(t)dt&=r(0.5)\Delta t + r(1.5)\Delta t + r(2.5)\Delta t + r(3.5)\Delta t\\
 		&=1(1500+1750+750-750)\\
-		&=1\text{ day}(3250\ L/day)\\
-		&=3,250\ L
+		&=1\text{ day}(3250\text{ L/day})\\
+		&=\boxed{3,250\text{ L}}
 	\end{align}$$
 \end{enumerate}
 
 \section{Additional Problem}
 Suppose \(h\) is a function such that \(h(2)=-4\), \(h'(2)=-7\), \(h''(2)=6\), \(h(5)=8\), \(h'(5)=10\), and \(h''(5)=20\), and \(h''\) is continuous everywhere. Evaluate \(\int_2^5h''(u)\,du\).
+$$\begin{align}
+	h''(v)&= (h'(v))'\\
+	\int_2^5 h''(v)dv\\
+	h'(5)-h'(2)&=10-(-7)\\
+	&= \boxed{17}
+\end{align}$$
 
 \end{document}
