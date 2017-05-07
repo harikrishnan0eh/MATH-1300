@@ -8,7 +8,7 @@
 *.so
 *.aux
 WebAssign.pdf
-*skip*.*
+*skip*.pdf
 
 # Packages #
 ############
